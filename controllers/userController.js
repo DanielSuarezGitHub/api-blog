@@ -1,6 +1,8 @@
-const { UserModel } = require("../models/userSchema");
+const UserModel = require("../models/userSchema");
 const jwt = require('jsonwebtoken');
 const passport = require("passport");
+const dotenv = require("dotenv");
+dotenv.config();
 
 async function register(req, res, next) {
   const { username, password } = req.body;
@@ -20,6 +22,7 @@ async function register(req, res, next) {
 function login(req, res) {
   passport.authenticate('local', {session: false}, (err, user, info) => {
     if (err || !user) {
+      console.log(err)
       return res.status(400).json({
         message: 'Something is not right',
         user : user
@@ -29,10 +32,6 @@ function login(req, res) {
     req.login(user, {session: false}, (err) => {
       if (err) {
         res.send(err);
-      }
-    
-      if (!process.env.JWT_SECRET_KEY) {
-        throw new Error('JWT Secret must be defined');
       }
 
       const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET_KEY);
