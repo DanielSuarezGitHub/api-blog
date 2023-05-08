@@ -1,4 +1,6 @@
 const PostModel = require("../models/postSchema")
+const CommentModel = require('../models/commentSchema');
+const { default: mongoose } = require("mongoose");
 
 exports.createPost = async function createPost(req, res, next) {
     try {
@@ -43,3 +45,21 @@ exports.updatePost = async function updatePost(req, res, next) {
         res.status(500).json({ message: 'An error occurred while updating the post' });
     }
 };
+
+
+exports.deletePost = async function deletePost(req, res, next) {
+    try {
+        let post = await PostModel.findById(req.params.id)
+        if ( post.author.toString() == req.user._id.toString()) {
+            await CommentModel.deleteMany({ post: req.params.id })
+            await PostModel.findByIdAndDelete(req.params.id);
+            res.status(200).json({ message: "Successfully deleted post with comments." });
+        } else {
+            throw new Error("post doesn't exist")
+        }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Successfully deleted post." });
+    }
+  }
+  
