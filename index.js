@@ -1,7 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const authRouter = require("./routes/AuthRouter");
-const postRouter = require("./routes/PostRouter")
+const postRouter = require("./routes/PostRouter");
+const commentRouter = require('./routes/CommentRouter')
 const cors = require('cors')
 require('./passport')
 
@@ -26,7 +27,7 @@ app.use((req, res, next) => {
 
 app.use("/", authRouter);
 app.use("/", postRouter)
-
+app.use("/", commentRouter)
 
 
 app.listen(port, () => {
